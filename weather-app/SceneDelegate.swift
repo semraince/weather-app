@@ -2,7 +2,6 @@
 //  SceneDelegate.swift
 //  weather-app
 //
-//  Created by semra on 4.05.2021.
 //  Copyright © 2021 semra. All rights reserved.
 //
 
