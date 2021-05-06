@@ -7,6 +7,25 @@
 
 import Foundation
 
+enum WeatherError: Error, LocalizedError {
+    case unknown;
+    case invalidCity;
+    case customDescription(String)
+    var errorDescription: String? {
+        switch self {
+        case .invalidCity :
+            return "Invalid City"
+        case .unknown:
+            return "There is an unknown error";
+        case .customDescription(let errorMessage):
+            return errorMessage;
+        }
+        
+        
+    }
+    
+}
+
 enum ErrorMessages {
     static let unableToHandleRequest = "We are currently unable to process your request. Please try again later";
     static let emptySearchText = "City cannot be empty!"

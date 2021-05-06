@@ -24,16 +24,32 @@ class WeatherManager : WeatherManagerProtocol {
         let urlString = String(format: url, cityQuery, API_KEY);
         print("\(urlString)")
         
-         AF.request(urlString).responseDecodable(of: WeatherData.self, queue: .main, dataPreprocessor: JSONResponseSerializer.defaultDataPreprocessor, decoder: JSONDecoder(), emptyResponseCodes: JSONResponseSerializer.defaultEmptyResponseCodes, emptyRequestMethods: JSONResponseSerializer.defaultEmptyRequestMethods) {
+        AF.request(urlString)
+            .validate()
+            .responseDecodable(of: WeatherData.self, queue: .main, dataPreprocessor: JSONResponseSerializer.defaultDataPreprocessor, decoder: JSONDecoder(), emptyResponseCodes: JSONResponseSerializer.defaultEmptyResponseCodes, emptyRequestMethods: JSONResponseSerializer.defaultEmptyRequestMethods) { [weak self]
             (response) in
             
             switch response.result {
             case .success(let data) :
                 completionHandler(.success(data.weatherModel))
             case .failure(let error) :
-                completionHandler(.failure(error));
+                if let err = self?.getWeatherDataError(error: error, data: response.data) {
+                    completionHandler(.failure(err));
+                }
+                else{
+                    completionHandler(.failure(WeatherError.unknown));
+                }
             }
         }
         
+    }
+    
+    private func getWeatherDataError(error: AFError, data: Data? ) -> Error? {
+        if error.responseCode == 404, let data = data, let failure = try? JSONDecoder().decode(WeatherDataFailure.self, from: data) {
+            return WeatherError.customDescription(failure.message);
+        }
+        else {
+            return nil;
+        }
     }
 }
