@@ -58,9 +58,6 @@ class WeatherViewController: UIViewController {
     
     private func updateViewWithError(errorMessage: String, loafError: String){
         self.stopHideAnimation();
-        self.conditionImageView.image = UIImage(named: "imSad")
-        self.conditionLabel.text = errorMessage
-        self.temperatureLabel.text = "";
         self.conditionLabel.textAlignment = .center
         self.conditionLabel.font = conditionLabel.font.withSize(15)
         self.navigationItem.title = "";
