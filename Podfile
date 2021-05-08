@@ -8,6 +8,7 @@ target 'weather-app' do
   # Pods for weather-app
 	pod 'Alamofire'
 	pod 'SkeletonView'
+	pod 'Loaf'
 
   target 'weather-appTests' do
     inherit! :search_paths

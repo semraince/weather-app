@@ -30,7 +30,7 @@ class WeatherManager : WeatherManagerProtocol {
     func fetchWeather(lat: Double, lng: Double, completionHandler: @escaping (Result<WeatherModel,Error>)->Void ){
             print(lat,lng)
            let url = "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%@&units=metric"
-           let urlString = String(format: url, lat, lng,  API_KEY);
+        let urlString = String(format: url, lat, lng,  API_KEY);
             fetchWeather(url: urlString, completionHandler: completionHandler);
            
            

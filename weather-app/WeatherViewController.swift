@@ -8,6 +8,7 @@
 import UIKit
 import SkeletonView
 import CoreLocation
+import Loaf
 
 protocol WeatherViewControllerDelegate : class {
     func updateWeatherAfterSearch(model: WeatherModel) -> Void
@@ -32,17 +33,7 @@ class WeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        weatherManager.fetchWeather(city: "Istanbul") { [weak self ](result) in
-            guard let self = self else {return}
-            switch(result) {
-            case .success(let data):
-                self.updateView(model: data)
-            case .failure(let error):
-                self.updateViewWithError();
-            }
-            
-        }
+        requestLocation();
         showAnimation();
         
     }
@@ -65,10 +56,11 @@ class WeatherViewController: UIViewController {
         
     }
     
-    private func updateViewWithError(){
+    private func updateViewWithError(errorMessage: String){
         self.stopHideAnimation();
         self.conditionImageView.image = UIImage(named: "imSad")
-        self.conditionLabel.text = ErrorMessages.unableToHandleRequest
+        self.conditionLabel.text = errorMessage
+        self.temperatureLabel.text = "";
         self.conditionLabel.textAlignment = .center
         self.conditionLabel.font = conditionLabel.font.withSize(15)
     }
@@ -86,8 +78,32 @@ class WeatherViewController: UIViewController {
         }
     }
     
+    private func handleRequest(_ location : CLLocation){
+        locationManager.stopUpdatingLocation();
+        let lat = location.coordinate.latitude;
+        let lng = location.coordinate.longitude;
+        weatherManager.fetchWeather(lat: lat, lng: lng) { [weak self] (result) in
+            guard let self = self else {return}
+            switch(result){
+            case .success(let data):
+                self.updateView(model: data)
+            case .failure(let error):
+                self.stopHideAnimation();
+                self.navigationItem.title = "";
+                self.conditionImageView.image =  UIImage(named: "imSad");
+                self.temperatureLabel.text = "Opps";
+                self.conditionLabel.text = ErrorMessages.unableToHandleRequest
+                Loaf(error.localizedDescription, state: .error, location: .top, presentingDirection: .vertical, dismissingDirection: .vertical, sender: self).show();
+            }
+           
+       }
+    }
     
     @IBAction func locationButtonTapped(_ sender: Any) {
+        requestLocation();
+    }
+    
+    private func requestLocation(){
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways,.authorizedWhenInUse:
             locationManager.requestLocation()
@@ -103,7 +119,9 @@ class WeatherViewController: UIViewController {
         let title = "Location cannot be accessed"
         let message = "Please enable location permission in settings";
         let alert = UIAlertController (title: title, message: message, preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil);
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            self.updateViewWithError(errorMessage: ErrorMessages.unableToHandleRequest);
+        }
         let enableAction = UIAlertAction(title: "Open Settings", style: .default) { _ in
             guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {return}
             if UIApplication.shared.canOpenURL(settingsURL){
@@ -147,23 +165,12 @@ extension WeatherViewController: WeatherViewControllerDelegate {
 extension WeatherViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-            locationManager.stopUpdatingLocation();
-            let lat = location.coordinate.latitude;
-            let lng = location.coordinate.longitude;
-            weatherManager.fetchWeather(lat: lat, lng: lng) { [weak self] (result) in
-                guard let self = self else {return}
-                switch(result){
-                case .success(let data):
-                    self.updateView(model: data)
-                case .failure(let error):
-                    self.updateViewWithError();
-                    
-                }
-            }
+            self.handleRequest(location)
         }
     }
-    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        self.updateViewWithError(errorMessage: ErrorMessages.unableToHandleRequest);
+        
         
     }
 }
