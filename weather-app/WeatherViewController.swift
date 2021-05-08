@@ -56,13 +56,18 @@ class WeatherViewController: UIViewController {
         
     }
     
-    private func updateViewWithError(errorMessage: String){
+    private func updateViewWithError(errorMessage: String, loafError: String){
         self.stopHideAnimation();
         self.conditionImageView.image = UIImage(named: "imSad")
         self.conditionLabel.text = errorMessage
         self.temperatureLabel.text = "";
         self.conditionLabel.textAlignment = .center
         self.conditionLabel.font = conditionLabel.font.withSize(15)
+        self.navigationItem.title = "";
+        self.conditionImageView.image =  UIImage(named: "imSad");
+        self.temperatureLabel.text = "Opps";
+        self.conditionLabel.text = errorMessage;
+        Loaf(loafError, state: .error, location: .top, presentingDirection: .vertical, dismissingDirection: .vertical, sender: self).show();
     }
 
 
@@ -88,12 +93,7 @@ class WeatherViewController: UIViewController {
             case .success(let data):
                 self.updateView(model: data)
             case .failure(let error):
-                self.stopHideAnimation();
-                self.navigationItem.title = "";
-                self.conditionImageView.image =  UIImage(named: "imSad");
-                self.temperatureLabel.text = "Opps";
-                self.conditionLabel.text = ErrorMessages.unableToHandleRequest
-                Loaf(error.localizedDescription, state: .error, location: .top, presentingDirection: .vertical, dismissingDirection: .vertical, sender: self).show();
+                self.updateViewWithError(errorMessage: ErrorMessages.unableToHandleRequest, loafError: error.localizedDescription)
             }
            
        }
@@ -120,7 +120,7 @@ class WeatherViewController: UIViewController {
         let message = "Please enable location permission in settings";
         let alert = UIAlertController (title: title, message: message, preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            self.updateViewWithError(errorMessage: ErrorMessages.unableToHandleRequest);
+            self.updateViewWithError(errorMessage: ErrorMessages.locationDeclined, loafError: ErrorMessages.locationDeclined);
         }
         let enableAction = UIAlertAction(title: "Open Settings", style: .default) { _ in
             guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {return}
@@ -169,8 +169,7 @@ extension WeatherViewController: CLLocationManagerDelegate {
         }
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        self.updateViewWithError(errorMessage: ErrorMessages.unableToHandleRequest);
-        
+        self.updateViewWithError(errorMessage: ErrorMessages.locationDeclined, loafError: error.localizedDescription)
         
     }
 }

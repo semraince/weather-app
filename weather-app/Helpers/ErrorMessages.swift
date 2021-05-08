@@ -27,7 +27,7 @@ enum WeatherError: Error, LocalizedError {
 }
 
 enum ErrorMessages {
-    static let unableToHandleRequest = "We are currently unable to process your request. Please try again later";
+    static let unableToHandleRequest = "Something went wrong. Please try again";
     static let emptySearchText = "City cannot be empty!";
-    static let locationDeclined = "Your location is required or add city manually";
+    static let locationDeclined = "location access required or manually add city";
 }
