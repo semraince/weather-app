@@ -7,6 +7,7 @@
 
 import UIKit
 import SkeletonView
+import CoreLocation
 
 protocol WeatherViewControllerDelegate : class {
     func updateWeatherAfterSearch(model: WeatherModel) -> Void
@@ -22,6 +23,12 @@ class WeatherViewController: UIViewController {
     
     @IBOutlet weak var addButton: UIBarButtonItem!
     let weatherManager : WeatherManagerProtocol = WeatherManager();
+    
+    lazy var locationManager: CLLocationManager = {
+        let manager = CLLocationManager();
+        manager.delegate = self;
+        return manager;
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,9 +46,6 @@ class WeatherViewController: UIViewController {
         showAnimation();
         
     }
-
-    
-   
     
     private func updateView(model: WeatherModel){
         self.stopHideAnimation();
@@ -84,6 +88,38 @@ class WeatherViewController: UIViewController {
     
     
     @IBAction func locationButtonTapped(_ sender: Any) {
+        switch CLLocationManager.authorizationStatus() {
+        case .authorizedAlways,.authorizedWhenInUse:
+            locationManager.requestLocation()
+        case .notDetermined :
+            locationManager.requestWhenInUseAuthorization();
+            locationManager.requestLocation()
+        default:
+            showAlertForLocationPermission();
+        }
+    }
+    
+    private func showAlertForLocationPermission() {
+        let title = "Location cannot be accessed"
+        let message = "Please enable location permission in settings";
+        let alert = UIAlertController (title: title, message: message, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil);
+        let enableAction = UIAlertAction(title: "Open Settings", style: .default) { _ in
+            guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {return}
+            if UIApplication.shared.canOpenURL(settingsURL){
+                if #available(iOS 10.0, *){
+                    UIApplication.shared.open(settingsURL, options: [:], completionHandler: nil)
+                    
+                }
+                else{
+                    UIApplication.shared.openURL(settingsURL);
+                }
+            }
+        }
+        alert.addAction(enableAction);
+        alert.addAction(cancelAction);
+        
+        present(alert, animated: true, completion: nil);
     }
     private func stopHideAnimation(){
         conditionImageView.hideSkeleton();
@@ -104,6 +140,30 @@ extension WeatherViewController: WeatherViewControllerDelegate {
             guard let self = self else {return}
             self.updateView(model: model);
         })
+        
+    }
+}
+
+extension WeatherViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            locationManager.stopUpdatingLocation();
+            let lat = location.coordinate.latitude;
+            let lng = location.coordinate.longitude;
+            weatherManager.fetchWeather(lat: lat, lng: lng) { [weak self] (result) in
+                guard let self = self else {return}
+                switch(result){
+                case .success(let data):
+                    self.updateView(model: data)
+                case .failure(let error):
+                    self.updateViewWithError();
+                    
+                }
+            }
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         
     }
 }

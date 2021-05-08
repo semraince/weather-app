@@ -11,6 +11,7 @@ import Alamofire
 
 public protocol WeatherManagerProtocol: class {
     func fetchWeather(city: String, completionHandler: @escaping (Result<WeatherModel,Error>)->Void)
+    func fetchWeather(lat: Double, lng: Double, completionHandler: @escaping (Result<WeatherModel,Error>)->Void)
 }
 
 class WeatherManager : WeatherManagerProtocol {
@@ -22,9 +23,21 @@ class WeatherManager : WeatherManagerProtocol {
         let cityQuery = city.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? city;
         let url = "https://api.openweathermap.org/data/2.5/weather?q=%@&appid=%@&units=metric"
         let urlString = String(format: url, cityQuery, API_KEY);
-        print("\(urlString)")
+        fetchWeather(url: urlString, completionHandler: completionHandler)
         
-        AF.request(urlString)
+    }
+    
+    func fetchWeather(lat: Double, lng: Double, completionHandler: @escaping (Result<WeatherModel,Error>)->Void ){
+            print(lat,lng)
+           let url = "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%@&units=metric"
+           let urlString = String(format: url, lat, lng,  API_KEY);
+            fetchWeather(url: urlString, completionHandler: completionHandler);
+           
+           
+       }
+    
+    private func fetchWeather(url:String, completionHandler: @escaping (Result<WeatherModel,Error>)->Void){
+        AF.request(url)
             .validate()
             .responseDecodable(of: WeatherData.self, queue: .main, dataPreprocessor: JSONResponseSerializer.defaultDataPreprocessor, decoder: JSONDecoder(), emptyResponseCodes: JSONResponseSerializer.defaultEmptyResponseCodes, emptyRequestMethods: JSONResponseSerializer.defaultEmptyRequestMethods) { [weak self]
             (response) in
@@ -41,7 +54,6 @@ class WeatherManager : WeatherManagerProtocol {
                 }
             }
         }
-        
     }
     
     private func getWeatherDataError(error: AFError, data: Data? ) -> Error? {
