@@ -16,7 +16,7 @@ public protocol WeatherManagerProtocol: class {
 
 class WeatherManager : WeatherManagerProtocol {
     private let API_KEY = "6622c027e3f1b8df743cdb0c8c0b43e1";
-    
+    private var cacheManager = CacheLocationManager()
     
     func fetchWeather(city: String, completionHandler: @escaping (Result<WeatherModel,Error>)->Void ){
         
@@ -28,9 +28,11 @@ class WeatherManager : WeatherManagerProtocol {
     }
     
     func fetchWeather(lat: Double, lng: Double, completionHandler: @escaping (Result<WeatherModel,Error>)->Void ){
+        print("girdim");
             print(lat,lng)
            let url = "https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%@&units=metric"
-        let urlString = String(format: url, lat, lng,  API_KEY);
+            let urlString = String(format: url, lat, lng,  API_KEY);
+            cacheManager.cacheCoordinates(lat: lat, lng: lng);
             fetchWeather(url: urlString, completionHandler: completionHandler);
            
            

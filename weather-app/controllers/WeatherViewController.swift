@@ -31,10 +31,21 @@ class WeatherViewController: UIViewController {
         return manager;
     }()
     
+    private var cacheManager = CacheLocationManager()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        requestLocation();
+        let coordinates = cacheManager.getCoordinates();
         showAnimation();
+        if let lat = coordinates.0 , let lng = coordinates.1 {
+            let location = CLLocation(latitude: lat, longitude: lng);
+            handleRequest(location);
+        }
+        else{
+            requestLocation();
+        }
+            
+        
         
     }
     
@@ -84,6 +95,7 @@ class WeatherViewController: UIViewController {
         locationManager.stopUpdatingLocation();
         let lat = location.coordinate.latitude;
         let lng = location.coordinate.longitude;
+        print("burdayım");
         weatherManager.fetchWeather(lat: lat, lng: lng) { [weak self] (result) in
             guard let self = self else {return}
             switch(result){
@@ -103,12 +115,16 @@ class WeatherViewController: UIViewController {
     private func requestLocation(){
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways,.authorizedWhenInUse:
+            print("a1");
             locationManager.requestLocation()
         case .notDetermined :
+            print("a2");
             locationManager.requestWhenInUseAuthorization();
             locationManager.requestLocation()
         default:
+            print("a3");
             showAlertForLocationPermission();
+            
         }
     }
     
@@ -122,13 +138,8 @@ class WeatherViewController: UIViewController {
         let enableAction = UIAlertAction(title: "Open Settings", style: .default) { _ in
             guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {return}
             if UIApplication.shared.canOpenURL(settingsURL){
-                if #available(iOS 10.0, *){
-                    UIApplication.shared.open(settingsURL, options: [:], completionHandler: nil)
+                UIApplication.shared.open(settingsURL, options: [:], completionHandler: nil)
                     
-                }
-                else{
-                    UIApplication.shared.openURL(settingsURL);
-                }
             }
         }
         alert.addAction(enableAction);

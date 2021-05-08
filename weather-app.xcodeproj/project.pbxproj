@@ -22,6 +22,7 @@
 		2AEB6DD12642182D00F09EFE /* AddLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEB6DD02642182D00F09EFE /* AddLocationViewController.swift */; };
 		2AEB6DD62642DC8700F09EFE /* ErrorMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEB6DD52642DC8700F09EFE /* ErrorMessages.swift */; };
 		2AEB6DD82644A94000F09EFE /* WeatherDataFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEB6DD72644A94000F09EFE /* WeatherDataFailure.swift */; };
+		2AEB6DDA26474ABA00F09EFE /* CacheLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEB6DD926474ABA00F09EFE /* CacheLocationManager.swift */; };
 		791AB31CDCBD2E3145C5D27E /* libPods-weather-appTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8411C8FE14339E35CAE2F2B /* libPods-weather-appTests.a */; };
 		C8239F66408B81B8B235CA5B /* libPods-weather-app.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C52C3DB26756355718BA426E /* libPods-weather-app.a */; };
 /* End PBXBuildFile section */
@@ -68,6 +69,7 @@
 		2AEB6DD02642182D00F09EFE /* AddLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocationViewController.swift; sourceTree = "<group>"; };
 		2AEB6DD52642DC8700F09EFE /* ErrorMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessages.swift; sourceTree = "<group>"; };
 		2AEB6DD72644A94000F09EFE /* WeatherDataFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataFailure.swift; sourceTree = "<group>"; };
+		2AEB6DD926474ABA00F09EFE /* CacheLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheLocationManager.swift; sourceTree = "<group>"; };
 		82B84AFFE4EBAF4CAD2C55DD /* Pods-weather-app-weather-appUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-weather-app-weather-appUITests.release.xcconfig"; path = "Target Support Files/Pods-weather-app-weather-appUITests/Pods-weather-app-weather-appUITests.release.xcconfig"; sourceTree = "<group>"; };
 		A8411C8FE14339E35CAE2F2B /* libPods-weather-appTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-weather-appTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA567943B0658FB94BFE1F31 /* Pods-weather-appTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-weather-appTests.release.xcconfig"; path = "Target Support Files/Pods-weather-appTests/Pods-weather-appTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -135,7 +137,6 @@
 				2AEB6DC62640B70300F09EFE /* manager */,
 				2AEB6D962640A2FB00F09EFE /* AppDelegate.swift */,
 				2AEB6D982640A2FB00F09EFE /* SceneDelegate.swift */,
-				2AEB6D9A2640A2FB00F09EFE /* WeatherViewController.swift */,
 				2AEB6D9C2640A2FB00F09EFE /* Main.storyboard */,
 				2AEB6D9F2640A2FE00F09EFE /* Assets.xcassets */,
 				2AEB6DA12640A2FE00F09EFE /* LaunchScreen.storyboard */,
@@ -166,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				2AEB6DCA2640BB5C00F09EFE /* WeatherManager.swift */,
+				2AEB6DD926474ABA00F09EFE /* CacheLocationManager.swift */,
 			);
 			path = manager;
 			sourceTree = "<group>";
@@ -190,6 +192,7 @@
 		2AEB6DCF2642180400F09EFE /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				2AEB6D9A2640A2FB00F09EFE /* WeatherViewController.swift */,
 				2AEB6DD02642182D00F09EFE /* AddLocationViewController.swift */,
 			);
 			path = controllers;
@@ -430,6 +433,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2AEB6DD62642DC8700F09EFE /* ErrorMessages.swift in Sources */,
+				2AEB6DDA26474ABA00F09EFE /* CacheLocationManager.swift in Sources */,
 				2AEB6DCE2642070400F09EFE /* DoubleExtension.swift in Sources */,
 				2AEB6DD82644A94000F09EFE /* WeatherDataFailure.swift in Sources */,
 				2AEB6DD12642182D00F09EFE /* AddLocationViewController.swift in Sources */,
