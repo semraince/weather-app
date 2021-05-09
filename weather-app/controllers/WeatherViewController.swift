@@ -115,15 +115,13 @@ class WeatherViewController: UIViewController {
     private func requestLocation(){
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways,.authorizedWhenInUse:
-            print("a1");
             locationManager.requestLocation()
         case .notDetermined :
-            print("a2");
             locationManager.requestWhenInUseAuthorization();
             locationManager.requestLocation()
         default:
-            print("a3");
             showAlertForLocationPermission();
+            locationManager.requestLocation();
             
         }
     }
